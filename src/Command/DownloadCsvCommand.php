@@ -9,7 +9,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use ZipArchive;
 
-class DownloadCSVCommand extends Command
+class DownloadCsvCommand extends Command
 {
     protected static $defaultName = 'app:download-rates';
 
@@ -18,8 +18,10 @@ class DownloadCSVCommand extends Command
         if (file_put_contents("public/rates.zip", fopen("https://www.ecb.europa.eu/stats/eurofxref/eurofxref.zip", 'r'))) {
             $zip = new ZipArchive;
             if ($zip->open('public/rates.zip') === true) {
-                $zip->extractTo('/public/rates/');
+                $zip->extractTo('public/rates/');
                 $zip->close();
+                unlink('public/rates.zip');
+                return Command::SUCCESS;
             }
             return Command::FAILURE;
         }

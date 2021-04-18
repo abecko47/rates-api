@@ -4,27 +4,25 @@
 namespace App\Controller;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class RatesController
 {
+    /**
+     * @Route("/rates")
+     */
     public function indexAction(): JsonResponse
     {
-        $fh = fopen("eurofxref.csv", "r");
 
-        $csvData = array();
-
-        while (($row = fgetcsv($fh, 0, ",")) !== FALSE) {
-            $csvData[] = $row;
+        if (file_exists('rates.json')) {
+            $rates = file_get_contents('rates.json');
+            return new JsonResponse(json_decode($rates));
         }
 
-        $jsonData = [];
-        $cols = count($csvData[0]) - 1;
-        $jsonData['Date'] = $csvData[1][0];
-        for ($i = 1; $i < $cols; $i++) {
-            $jsonData[str_replace(" ", "", $csvData[0][$i])] = floatval($csvData[1][$i]);
-        }
+        $response = new JsonResponse(['error' => 'Rates are not available.']);
+        $response->setStatusCode(500);
 
-        return new JsonResponse($jsonData);
+        return $response;
     }
 }
