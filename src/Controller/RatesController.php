@@ -8,9 +8,6 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class RatesController
 {
-    /**
-     * @Route("/rates/")
-     */
     public function indexAction(): JsonResponse
     {
         $fh = fopen("eurofxref.csv", "r");
